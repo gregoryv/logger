@@ -2,7 +2,6 @@ package logger
 
 import (
 	"bytes"
-	"log"
 	"testing"
 
 	"github.com/gregoryv/asserter"
@@ -10,25 +9,27 @@ import (
 
 func Test_output_of_logger(t *testing.T) {
 	buf := bytes.NewBufferString("")
-	log := New(buf, "", log.LstdFlags)
-	log.Print("hello")
 	assert := asserter.New(t)
-	assert().Contains(buf.Bytes(), "hello")
-
-	log.Printf("%s is ok", "world")
-	assert().Contains(buf.Bytes(), "world is ok")
-}
-
-func Test_working_with_tAdapter(t *testing.T) {
-	log := NewTadapter(t)
-	log.Print("working")
-	log.Printf("It's %s", "working")
-	//t.Fail()
+	verbose := NewVerbose(buf)
+	debug := NewDebug(buf)
+	cases := []struct {
+		l L
+	}{
+		{verbose},
+		{debug},
+	}
+	for _, c := range cases {
+		c.l.Log("hello")
+		assert().Contains(buf.Bytes(), "hello")
+		c.l.Logf("%s is ok", "world")
+		assert().Contains(buf.Bytes(), "world is ok")
+		buf.Reset()
+	}
 }
 
 func Test_silent(t *testing.T) {
-	log := NewSilent()
-	log.Print("nada")
-	log.Printf("%s", "nada")
+	l := New()
+	l.Log("nada")
+	l.Logf("%s", "nada")
 	//t.Fail()
 }

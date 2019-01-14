@@ -5,46 +5,44 @@ import (
 	"log"
 )
 
-type logger struct {
-	*log.Logger
+// Returns a logger with log.LstdFlags
+func NewVerbose(w io.Writer) L {
+	return &pAdapter{log.New(w, "", log.LstdFlags)}
 }
 
-type Logger interface {
-	Print(args ...interface{})
-	Printf(format string, args ...interface{})
+// Returns a logger with log.LstdFlags|log.Lshortfile
+func NewDebug(w io.Writer) L {
+	return &pAdapter{log.New(w, "", log.LstdFlags|log.Lshortfile)}
 }
 
-// New returns a Logger wrapping log.Logger
-func New(out io.Writer, prefix string, flag int) Logger {
-	return &logger{log.New(out, prefix, flag)}
-}
-
-type T interface {
+type L interface {
 	Log(args ...interface{})
 	Logf(format string, args ...interface{})
 }
 
-func NewTadapter(t T) Logger {
-	return &tAdapter{t}
+type pAdapter struct {
+	*log.Logger
 }
 
-type tAdapter struct {
-	T
+func (p *pAdapter) Log(args ...interface{}) {
+	p.Print(args...)
 }
 
-func (a *tAdapter) Print(args ...interface{}) {
-	a.Log(args...)
+func (p *pAdapter) Logf(format string, args ...interface{}) {
+	p.Printf(format, args...)
 }
 
-func (a *tAdapter) Printf(format string, args ...interface{}) {
-	a.Logf(format, args...)
+type P interface {
+	Print(args ...interface{})
+	Printf(format string, args ...interface{})
 }
 
-func NewSilent() Logger {
+// Returns a silent logger
+func New() L {
 	return &silent{}
 }
 
 type silent struct{}
 
-func (*silent) Print(args ...interface{})                 {}
-func (*silent) Printf(format string, args ...interface{}) {}
+func (*silent) Log(args ...interface{})                 {}
+func (*silent) Logf(format string, args ...interface{}) {}
