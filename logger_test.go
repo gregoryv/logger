@@ -25,3 +25,10 @@ func Test_working_with_tAdapter(t *testing.T) {
 	log.Printf("It's %s", "working")
 	//t.Fail()
 }
+
+func Test_silent(t *testing.T) {
+	log := NewSilent()
+	log.Print("nada")
+	log.Printf("%s", "nada")
+	//t.Fail()
+}

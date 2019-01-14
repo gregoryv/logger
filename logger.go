@@ -14,6 +14,7 @@ type Logger interface {
 	Printf(format string, args ...interface{})
 }
 
+// New returns a Logger wrapping log.Logger
 func New(out io.Writer, prefix string, flag int) Logger {
 	return &logger{log.New(out, prefix, flag)}
 }
@@ -38,3 +39,12 @@ func (a *tAdapter) Print(args ...interface{}) {
 func (a *tAdapter) Printf(format string, args ...interface{}) {
 	a.Logf(format, args...)
 }
+
+func NewSilent() Logger {
+	return &silent{}
+}
+
+type silent struct{}
+
+func (*silent) Print(args ...interface{})                 {}
+func (*silent) Printf(format string, args ...interface{}) {}
