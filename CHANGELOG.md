@@ -7,5 +7,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 
-- logger.NewSilent() for non verbose modes
-- Wrap testing.T Log and Logf funcs in adapter
+- logger.Silent for non verbose modes
+- Adapt log.Logger

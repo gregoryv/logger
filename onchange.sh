@@ -11,6 +11,7 @@ case $extension in
 	goimports -w $path
         gofmt -w $path
 	go vet
+	doc .
         ;;
 esac
 go test -coverprofile /tmp/c.out .
