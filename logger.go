@@ -1,31 +1,28 @@
-/*
-Package logger adapts gos built in logger.Logger with Log and Logf funcs.
+/* Package logger adapts log.Logger with Log and Logf funcs.
 
-This enables you to write code like
+There are two benefits of this, the smaller Logger interface limits
+logging to output only and can easily be replaced by the testing.T
+object during testing.
 
-  type Car struct {
-     logger.Logger
-  }
+	type Car struct {
+		logger.Logger
+	}
 
-  log := log.New(os.Stderr, "car: ", log.Lshortfile)
-  car := &Car{logger.Adapt(log))
-
-  car.Log("something")
-  car.Logf("more %s", here)
+	car := &Car{logger.New("car: ")}
+	car.Log("brakes are failing")
+	car.Logf("reached speed limit %s", 100)
 */
 package logger
 
 import (
-	"io"
 	"log"
+	"os"
 )
 
-// Returns a logger with log.LstdFlags
-func New(w io.Writer) Logger {
-	return Adapt(log.New(w, "", log.LstdFlags))
+// Returns a logger with log.LstdFlags|log.Lshortfile
+func New(prefix string) Logger {
+	return Adapt(log.New(os.Stderr, prefix, log.LstdFlags|log.Lshortfile))
 }
-
-type Any interface{}
 
 type Logger interface {
 	Log(args ...interface{})
@@ -43,11 +40,6 @@ func Adapt(p Printer) Logger { return &Adapter{p} }
 type Printer interface {
 	Print(args ...interface{})
 	Printf(format string, args ...interface{})
-}
-
-// Returns a logger with log.LstdFlags|log.Lshortfile
-func NewDebug(w io.Writer) Logger {
-	return Adapt(log.New(w, "", log.LstdFlags|log.Lshortfile))
 }
 
 // Logger that outputs nothing

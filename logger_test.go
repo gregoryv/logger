@@ -9,14 +9,18 @@ import (
 	"github.com/gregoryv/asserter"
 )
 
+func Test_constructor(t *testing.T) {
+	l := New("prefix")
+	assert := asserter.New(t)
+	assert(l != nil).Fail()
+}
+
 func Test_output_of_logger(t *testing.T) {
 	buf := bytes.NewBufferString("")
 	assert := asserter.New(t)
 	cases := []struct {
 		l Logger
 	}{
-		{New(buf)},
-		{NewDebug(buf)},
 		{Adapt(log.New(buf, "", log.LstdFlags))},
 	}
 	for i, c := range cases {
