@@ -27,10 +27,3 @@ func Test_output_of_logger(t *testing.T) {
 	l.Logf("%s", exp)
 	assert().Contains(w.Bytes(), exp)
 }
-
-func Test_silent(t *testing.T) {
-	l := Silent
-	l.Log("nada")
-	l.Logf("%s", "nada")
-	//t.Fail()
-}

@@ -13,3 +13,10 @@ func ExampleNew() {
 	car.Log("brakes are failing")
 	car.Logf("reached speed limit %s", 100)
 }
+
+func Example_silent() {
+	l := logger.Silent
+	l.Log("nada")
+	l.Logf("%s", "nada")
+	// output:
+}
