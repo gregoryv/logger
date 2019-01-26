@@ -1,3 +1,18 @@
+/*
+Package logger adapts gos built in logger.Logger with Log and Logf funcs.
+
+This enables you to write code like
+
+  type Car struct {
+     logger.Logger
+  }
+
+  log := log.New(os.Stderr, "car: ", log.Lshortfile)
+  car := &Car{logger.Adapt(log))
+
+  car.Log("something")
+  car.Logf("more %s", here)
+*/
 package logger
 
 import (
@@ -6,32 +21,33 @@ import (
 )
 
 // Returns a logger with log.LstdFlags
-func New(w io.Writer) L {
-	return &lAdapter{log.New(w, "", log.LstdFlags)}
+func New(w io.Writer) Logger {
+	return Adapt(log.New(w, "", log.LstdFlags))
 }
 
 type Any interface{}
 
-type L interface {
+type Logger interface {
 	Log(args ...interface{})
 	Logf(format string, args ...interface{})
 }
 
-type lAdapter struct{ P }
+// Adapter maps Log to Print funcs
+type Adapter struct{ p Printer }
 
-func (a *lAdapter) Log(args ...interface{})            { a.Print(args...) }
-func (a *lAdapter) Logf(f string, args ...interface{}) { a.Printf(f, args...) }
+func (a *Adapter) Log(args ...interface{})            { a.p.Print(args...) }
+func (a *Adapter) Logf(f string, args ...interface{}) { a.p.Printf(f, args...) }
 
-func Adapt(printer P) L { return &lAdapter{printer} }
+func Adapt(p Printer) Logger { return &Adapter{p} }
 
-type P interface {
+type Printer interface {
 	Print(args ...interface{})
 	Printf(format string, args ...interface{})
 }
 
 // Returns a logger with log.LstdFlags|log.Lshortfile
-func NewDebug(w io.Writer) L {
-	return &lAdapter{log.New(w, "", log.LstdFlags|log.Lshortfile)}
+func NewDebug(w io.Writer) Logger {
+	return Adapt(log.New(w, "", log.LstdFlags|log.Lshortfile))
 }
 
 // Logger that outputs nothing

@@ -13,7 +13,7 @@ func Test_output_of_logger(t *testing.T) {
 	buf := bytes.NewBufferString("")
 	assert := asserter.New(t)
 	cases := []struct {
-		l L
+		l Logger
 	}{
 		{New(buf)},
 		{NewDebug(buf)},
