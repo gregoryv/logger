@@ -7,11 +7,19 @@
 
     go get github.com/gregoryv/logger
 
-In eg. your test
+Use in your code
 
-    log := logger.NewTadapter(t)
-	// use the logger as you would with log.Logger
-	obj := NewSomething(log)
-	obj.DoSomething()
-	t.Fail()
-	// whatever DoSomething() logged ends up using t.Log and t.Logf funcs
+    type Car struct {
+        logger.Logger
+    }
+
+    car := &Car{logger.New("car: ")}
+    car.Log("brakes are failing")
+    car.Logf("reached speed limit %s", 100)
+
+or when testing the logger can be replaced by testing.T
+
+    func Test_car_speed(t *testing.T) {
+        car := &Car{t}
+        // asserts here
+    }
