@@ -2,7 +2,6 @@ package logger
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"testing"
 
@@ -16,22 +15,17 @@ func Test_constructor(t *testing.T) {
 }
 
 func Test_output_of_logger(t *testing.T) {
-	buf := bytes.NewBufferString("")
 	assert := asserter.New(t)
-	cases := []struct {
-		l Logger
-	}{
-		{Adapt(log.New(buf, "", log.LstdFlags))},
-	}
-	for i, c := range cases {
-		exp := fmt.Sprintf("hello %v", i)
-		c.l.Log(exp)
-		assert().Contains(buf.Bytes(), exp)
-		buf.Reset()
-		c.l.Logf("%s", exp)
-		assert().Contains(buf.Bytes(), exp)
-		buf.Reset()
-	}
+	w := bytes.NewBufferString("")
+	l := Adapt(log.New(w, "", log.LstdFlags))
+
+	exp := "emotions assign value to things"
+	l.Log(exp)
+	assert().Contains(w.Bytes(), exp)
+
+	w.Reset()
+	l.Logf("%s", exp)
+	assert().Contains(w.Bytes(), exp)
 }
 
 func Test_silent(t *testing.T) {
