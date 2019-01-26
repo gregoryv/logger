@@ -9,7 +9,7 @@ import (
 )
 
 func Test_constructor(t *testing.T) {
-	l := New("prefix")
+	l := New()
 	assert := asserter.New(t)
 	assert(l != nil).Fail()
 }
@@ -17,7 +17,7 @@ func Test_constructor(t *testing.T) {
 func Test_output_of_logger(t *testing.T) {
 	assert := asserter.New(t)
 	w := bytes.NewBufferString("")
-	l := Adapt(log.New(w, "", log.LstdFlags))
+	l := Wrap(log.New(w, "", log.LstdFlags))
 
 	exp := "emotions assign value to things"
 	l.Log(exp)
@@ -26,4 +26,12 @@ func Test_output_of_logger(t *testing.T) {
 	w.Reset()
 	l.Logf("%s", exp)
 	assert().Contains(w.Bytes(), exp)
+}
+
+func Test_using_t_as_logger(t *testing.T) {
+	type Car struct {
+		Logger
+	}
+	car := &Car{t}
+	car.Log("starting")
 }

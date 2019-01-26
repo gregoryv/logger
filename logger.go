@@ -15,13 +15,14 @@ object during testing.
 package logger
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
 
 // Returns a logger with log.LstdFlags|log.Lshortfile
-func New(prefix string) Logger {
-	return Adapt(log.New(os.Stderr, prefix, log.LstdFlags|log.Lshortfile))
+func New() Logger {
+	return Wrap(log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile))
 }
 
 type Logger interface {
@@ -29,17 +30,20 @@ type Logger interface {
 	Logf(format string, args ...interface{})
 }
 
-// Adapter maps Log to Print funcs
-type Adapter struct{ p Printer }
+func Wrap(l *log.Logger) *Wrapped {
+	return &Wrapped{l}
+}
 
-func (a *Adapter) Log(args ...interface{})            { a.p.Print(args...) }
-func (a *Adapter) Logf(f string, args ...interface{}) { a.p.Printf(f, args...) }
+type Wrapped struct {
+	l *log.Logger
+}
 
-func Adapt(p Printer) Logger { return &Adapter{p} }
+func (wrap *Wrapped) Log(args ...interface{}) {
+	wrap.l.Output(2, fmt.Sprint(args...))
+}
 
-type Printer interface {
-	Print(args ...interface{})
-	Printf(format string, args ...interface{})
+func (wrap *Wrapped) Logf(format string, args ...interface{}) {
+	wrap.l.Output(2, fmt.Sprintf(format, args...))
 }
 
 // Logger that outputs nothing

@@ -14,5 +14,7 @@ case $extension in
 	doc .
         ;;
 esac
+go build -o /tmp/example ./cmd/example/main.go
+/tmp/example
 go test -coverprofile /tmp/c.out .
 uncover /tmp/c.out

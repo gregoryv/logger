@@ -13,7 +13,7 @@ Use in your code
         logger.Logger
     }
 
-    car := &Car{logger.New("car: ")}
+    car := &Car{logger.New()}
     car.Log("brakes are failing")
     car.Logf("reached speed limit %s", 100)
 
