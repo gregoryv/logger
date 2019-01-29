@@ -47,7 +47,7 @@ func (wrap *Wrapped) Logf(format string, args ...interface{}) {
 }
 
 // Logger that outputs nothing
-const Silent silent = iota
+var Silent Logger = silent(0)
 
 type silent int
 
