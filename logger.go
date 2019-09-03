@@ -8,7 +8,7 @@ object during testing.
 		logger.Logger
 	}
 
-	car := &Car{logger.New("car: ")}
+	car := &Car{logger.New()}
 	car.Log("brakes are failing")
 	car.Logf("reached speed limit %s", 100)
 */
@@ -21,7 +21,7 @@ import (
 )
 
 // Returns a logger with log.LstdFlags|log.Lshortfile
-func New() Logger {
+func New() *Wrapped {
 	return Wrap(log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile))
 }
 
@@ -53,3 +53,20 @@ type silent int
 
 func (silent) Log(args ...interface{})                 {}
 func (silent) Logf(format string, args ...interface{}) {}
+
+func Prefix(wrap *Wrapped, prefix string) *Prefixed {
+	return &Prefixed{wrap, prefix}
+}
+
+type Prefixed struct {
+	*Wrapped
+	prefix string
+}
+
+func (p *Prefixed) Log(args ...interface{}) {
+	p.l.Output(2, p.prefix+fmt.Sprint(args...))
+}
+
+func (p *Prefixed) Logf(format string, args ...interface{}) {
+	p.l.Output(2, fmt.Sprintf(p.prefix+format, args...))
+}

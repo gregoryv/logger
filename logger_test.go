@@ -26,6 +26,15 @@ func Test_output_of_logger(t *testing.T) {
 	w.Reset()
 	l.Logf("%s", exp)
 	assert().Contains(w.Bytes(), exp)
+
+	p := Prefix(l, "p: ")
+	w.Reset()
+	p.Log("hello")
+	assert().Contains(w.Bytes(), "p: hello")
+
+	w.Reset()
+	p.Logf("%s", "hello")
+	assert().Contains(w.Bytes(), "p: hello")
 }
 
 func Test_using_t_as_logger(t *testing.T) {
