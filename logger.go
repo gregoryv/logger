@@ -20,22 +20,23 @@ import (
 	"os"
 )
 
-// Returns a logger with log.LstdFlags|log.Lshortfile
-func New() *Wrapped {
-	return Wrap(log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile))
-}
-
 type Logger interface {
 	Log(args ...interface{})
 	Logf(format string, args ...interface{})
 }
 
-func Wrap(l *log.Logger) *Wrapped {
-	return &Wrapped{l}
+// Returns a logger with log.LstdFlags|log.Lshortfile
+func New() *Wrapped {
+	return Wrap(log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile))
 }
 
 type Wrapped struct {
 	l *log.Logger
+}
+
+// Wrap creates and adapter from Logger to log.Logger
+func Wrap(l *log.Logger) *Wrapped {
+	return &Wrapped{l}
 }
 
 func (wrap *Wrapped) Log(args ...interface{}) {
