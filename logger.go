@@ -25,9 +25,14 @@ type Logger interface {
 	Logf(format string, args ...interface{})
 }
 
-// Returns a logger with log.LstdFlags|log.Lshortfile
+// Returns a logger with log.LstdFlags|log.Lshortfile that writes to stderr
 func New() *Wrapped {
 	return Wrap(log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile))
+}
+
+// Returns a logger with empty flags that writes to stdout
+func NewProgress() *Wrapped {
+	return Wrap(log.New(os.Stdout, "", 0))
 }
 
 type Wrapped struct {

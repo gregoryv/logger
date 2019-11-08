@@ -9,9 +9,14 @@ import (
 )
 
 func Test_constructor(t *testing.T) {
-	l := New()
-	assert := asserter.New(t)
-	assert(l != nil).Fail()
+	ok := func(l Logger) {
+		t.Helper()
+		if l == nil {
+			t.Fail()
+		}
+	}
+	ok(New())
+	ok(NewProgress())
 }
 
 func Test_output_of_logger(t *testing.T) {
