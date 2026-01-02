@@ -1,4 +1,5 @@
-/* Package logger adapts log.Logger with Log and Logf funcs.
+/*
+Package logger adapts log.Logger with Log and Logf funcs.
 
 There are two benefits of this, the smaller Logger interface limits
 logging to output only and can easily be replaced by the testing.T
